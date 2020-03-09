@@ -6,6 +6,8 @@ Outil pour augmenter la bienveillance lors de l'évaluation d'élèves.
   * Entrer les notes dans un fichier tel que **listeNote.csv**. 
     Le séparateur de champ est le point-virgule et les décimales sont représentées délimitées par la virgule
   * Exéctuer le code Python.
+  * Définir la note maximale.
+  * Ajuster **d'abord la moyenne**.
   * Les notes ajustées sont dans la colonne **noteagueule**.
   
   
