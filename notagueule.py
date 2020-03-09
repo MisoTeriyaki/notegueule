@@ -1,3 +1,5 @@
+# -*-coding:Utf-8 -*
+
 import sys
 import matplotlib
 matplotlib.use('Qt5Agg')
@@ -122,7 +124,7 @@ class MainWindow(QWidget):
         
     def nouvEcart(self):
         nouveauEcartType = self.sliderEcart.value()
-        self.data['notagueule'] = (np.power(self.data['Evaluation'], 2)*nouveauEcartType**2/np.std(self.data.iloc[:,1])**2 - (nouveauEcartType**2/np.std(self.data.iloc[:,1])**2 -1 )*np.mean(self.data.iloc[:,1])**2)**0.5
+        self.data['notagueule'] = (np.power(self.data['notagueule'], 2)*nouveauEcartType**2/np.std(self.data.iloc[:,2])**2 - (nouveauEcartType**2/np.std(self.data.iloc[:,2])**2 -1 )*np.mean(self.data.iloc[:,2])**2)**0.5
         self.maj()
 
         
