@@ -8,7 +8,7 @@ Outil pour augmenter la bienveillance lors de l'évaluation d'élèves.
   * Exéctuer le code Python.
   * Définir la note maximale.
   * Ajuster **d'abord la moyenne**.
-  * Les notes ajustées sont dans la colonne **noteagueule**.
+  * Les notes ajustées sont dans la colonne **notagueule**.
   
   
 * Prochaines améliorations :
