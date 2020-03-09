@@ -13,6 +13,7 @@ Outil pour augmenter la bienveillance lors de l'évaluation d'élèves.
   * Importation d'un fichier de notes à partir d'un sélecteur de fichier
   * Equivalence crédit ECTS pour les élèves de classes préparatoires
   * Génération d'un fichier compatible Pronote
+  * Prise en compte de bonus suivant les voeux de poursuite d'étude
 
 
 
