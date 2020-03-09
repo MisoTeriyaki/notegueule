@@ -1,4 +1,4 @@
-# notegueule
+# notagueule
 Outil pour augmenter la bienveillance lors de l'évaluation d'élèves.
 
 * Nécessite : python3, pyqt5, pandas, numpy, matplotlib (fonctionne directement avec la distribution Anaconda)
