@@ -73,9 +73,9 @@ class MainWindow(QWidget):
         self.sliderMoy = QSlider(Qt.Horizontal)
         self.sliderMoy.setFocusPolicy(Qt.StrongFocus)
         self.sliderMoy.setTickPosition(QSlider.TicksBothSides)
-        self.sliderMoy.setTickInterval(1)
-        self.sliderMoy.setSingleStep(0.5)
-        self.sliderMoy.setMaximum(20)
+        self.sliderMoy.setTickInterval(10)
+        self.sliderMoy.setSingleStep(5)
+        self.sliderMoy.setMaximum(200)
 
         layout.addWidget(self.moyLabel)
         layout.addWidget(self.sliderMoy)
@@ -84,9 +84,9 @@ class MainWindow(QWidget):
         self.sliderEcart = QSlider(Qt.Horizontal)
         self.sliderEcart.setFocusPolicy(Qt.StrongFocus)
         self.sliderEcart.setTickPosition(QSlider.TicksBothSides)
-        self.sliderEcart.setTickInterval(1)
-        self.sliderEcart.setSingleStep(0.1)
-        self.sliderEcart.setMaximum(10)
+        self.sliderEcart.setTickInterval(10)
+        self.sliderEcart.setSingleStep(5)
+        self.sliderEcart.setMaximum(100)
 
         layout.addWidget(ecartLabel)
         layout.addWidget(self.sliderEcart)
@@ -105,8 +105,8 @@ class MainWindow(QWidget):
         
         self.setLayout(layout)
 
-        self.sliderMoy.setValue(np.mean(self.data.iloc[:,1]))
-        self.sliderEcart.setValue(np.std(self.data.iloc[:,1]))
+        self.sliderMoy.setValue(np.mean(self.data.iloc[:,1]) * 10)
+        self.sliderEcart.setValue(np.std(self.data.iloc[:,1]) * 10)
         self.maj()
 
         self.sliderMoy.valueChanged.connect(self.nouvMoy)
@@ -118,12 +118,12 @@ class MainWindow(QWidget):
         self.maj()
         
     def nouvMoy(self):
-        self.data['notagueule'] = self.data['Evaluation'] + self.sliderMoy.value() - np.mean(self.data.iloc[:,1])
+        self.data['notagueule'] = self.data['Evaluation'] + self.sliderMoy.value() / 10 - np.mean(self.data.iloc[:,2])
         self.maj()
       
         
     def nouvEcart(self):
-        nouveauEcartType = self.sliderEcart.value()
+        nouveauEcartType = self.sliderEcart.value() / 10
         self.data['notagueule'] = (np.power(self.data['notagueule'], 2)*nouveauEcartType**2/np.std(self.data.iloc[:,2])**2 - (nouveauEcartType**2/np.std(self.data.iloc[:,2])**2 -1 )*np.mean(self.data.iloc[:,2])**2)**0.5
         self.maj()
 
