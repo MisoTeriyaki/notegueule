@@ -118,7 +118,7 @@ class MainWindow(QWidget):
         self.maj()
         
     def nouvMoy(self):
-        self.data['notagueule'] = self.data['Evaluation'] + self.sliderMoy.value() / 10 - np.mean(self.data.iloc[:,2])
+        self.data['notagueule'] = self.data['Evaluation'] + self.sliderMoy.value() / 10 - np.mean(self.data.iloc[:,1])
         self.maj()
       
         
