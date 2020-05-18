@@ -7,7 +7,7 @@ Outil pour augmenter la bienveillance lors de l'évaluation d'élèves.
   
     Le séparateur de champ est le point-virgule et les décimales sont représentées délimitées par la virgule.
     
-    **Toutes les cellules de la colonn à ajuster doivent contenir un nombre.**
+    **Toutes les cellules de la colonne à ajuster doivent contenir un nombre.**
   * Exéctuer le code Python.
   * Définir la note maximale.
   * Ajuster d'abord la moyenne et ensuite l'écart+type.
