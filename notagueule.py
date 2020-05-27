@@ -5,7 +5,7 @@ import matplotlib
 matplotlib.use('Qt5Agg')
 
 from PyQt5.QtCore import *
-from PyQt5.QtWidgets import (QTableView, QApplication, QSlider, QHBoxLayout, QVBoxLayout, QWidget, QLabel, QLineEdit, QDoubleSpinBox, QPushButton)
+from PyQt5.QtWidgets import (QTableView, QApplication, QSlider, QHBoxLayout, QVBoxLayout, QWidget, QLabel, QLineEdit, QDoubleSpinBox, QPushButton, QFileDialog)
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.figure
 import pandas
@@ -54,13 +54,13 @@ class MainWindow(QWidget):
 
         self.fig = matplotlib.figure.Figure()
         self.sc = FigureCanvas(self.fig)
-
+        self.ax1 = self.fig.add_subplot(111)
 
         layout.addWidget(self.sc)
         ###################
         layoutH = QHBoxLayout()
         self.noteMaxLabel = QLabel("Note maximale : ")
-        self.baremeMax = 30
+        self.baremeMax = 20
         self.noteMax = QLineEdit(str(self.baremeMax))
         layoutH.addWidget(self.noteMaxLabel)
         layoutH.addWidget(self.noteMax)
@@ -87,12 +87,14 @@ class MainWindow(QWidget):
         self.sliderEcart.setSingleStep(0.1)
         self.sliderEcart.setMaximum(10)
 
+        self.boutonOuvrir = QPushButton("Ouvrir")
+        self.boutonOuvrir.clicked.connect(self.ouvrir)
         self.boutonExport = QPushButton("Export")
         self.boutonExport.clicked.connect(self.export)
         
         layoutH2.addWidget(self.sliderEcart)
+        layoutH2.addWidget(self.boutonOuvrir)
         layoutH2.addWidget(self.boutonExport)
-        
         
         layout.addWidget(ecartLabel)
         layout.addLayout(layoutH2)
@@ -100,16 +102,14 @@ class MainWindow(QWidget):
         #####################
 
         self.table = QTableView()
+        # ouverture de listeNote.csv par défaut
         self.data = pandas.read_csv('listeNote.csv', delimiter=';', decimal=',')
         self.data.insert(len(self.data.columns), 'notagueule', self.data.iloc[:,-1])
         self.model = TableModel(self.data.iloc[:len(self.data)])
         self.table.setModel(self.model)
+
         layout.addWidget(self.table)
 
-        self.ax1 = self.fig.add_subplot(211)
-        self.ax1.hist(self.data.iloc[:, -2], bins=range(0, self.baremeMax, 1))
-        self.ax2 = self.fig.add_subplot(212)
-        
         self.setLayout(layout)
 
         self.sliderMoy.setValue(np.mean(self.data.iloc[:,-1]) * 10)
@@ -119,16 +119,28 @@ class MainWindow(QWidget):
         self.sliderMoy.valueChanged.connect(self.nouvMoy)
         self.sliderEcart.valueChanged.connect(self.nouvEcart)
 
+    def remplissageTableau(self, nom):
+        self.data = pandas.read_csv(nom, delimiter=';', decimal=',')
+        self.data.insert(len(self.data.columns), 'notagueule', self.data.iloc[:,-1])
+        self.model = TableModel(self.data.iloc[:len(self.data)])
+        self.table.setModel(self.model)
+        
+    
     def nouvMax(self):
         if self.noteMax.text() != "":
             self.baremeMax = float(self.noteMax.text())
         self.maj()
 
+    def ouvrir(self):
+        nomFichier = QFileDialog.getOpenFileName(self, 'Ouvrir', "", "*.csv")
+        self.remplissageTableau(nomFichier[0])
+        self.maj()
+
     def export(self):
-        self.data.to_csv("NTGexport.csv", sep=';', encoding='utf-8')
+        self.data.to_csv("NTGexport.csv", sep=';', decimal=",", encoding='utf-8')
         
     def nouvMoy(self):
-        self.data.iloc[:, -1] = self.data.iloc[:,-2] + self.sliderMoy.value() / 10 - np.mean(self.data.iloc[:,-2])
+        self.data.iloc[:, -1] = round(self.data.iloc[:,-2] + self.sliderMoy.value() / 10 - np.mean(self.data.iloc[:,-2]), 2)
         self.maj()
       
         
@@ -136,9 +148,7 @@ class MainWindow(QWidget):
         nouveauEcartType = self.sliderEcart.value()
         ancienEcartType = np.std(self.data.iloc[:,-1])
         moy = np.mean(self.data.iloc[:,-1])
-        self.data.iloc[:,-1] = self.data.iloc[:,-1] * nouveauEcartType / ancienEcartType - (nouveauEcartType / ancienEcartType - 1) * moy
-        print(self.data.iloc[:,-1])
-        print(nouveauEcartType)
+        self.data.iloc[:,-1] = round(self.data.iloc[:,-1] * nouveauEcartType / ancienEcartType - (nouveauEcartType / ancienEcartType - 1) * moy, 2)
         self.maj()
 
         
@@ -151,16 +161,17 @@ class MainWindow(QWidget):
         self.model = TableModel(self.data.iloc[:len(self.data)])
         self.table.setModel(self.model)
 
-        self.moyLabel.setText("Moyenne : " + str( np.mean(self.data.iloc[:,-1])))
+        self.moyLabel.setText("Moyenne : " + str(round(np.mean(self.data.iloc[:,-1]), 2)))
+        self.sliderEcart.setValue(np.std(self.data.iloc[:,-1]))
         # gaussienne
         x = np.linspace(0, self.baremeMax, 500)
         y = stats.norm.pdf(x, np.mean(self.data.iloc[:,-1]), np.std(self.data.iloc[:,-1]))
-        #self.ax2 = self.fig.add_subplot(212)
-        self.ax2.cla()
-        self.ax2.plot(x, y, "r", label="notagueule")
+        self.ax1.cla()
+        self.ax1.hist(self.data.iloc[:, -2], bins=range(0, self.baremeMax, 1), density=True, color='gray', alpha=0.2)
+        self.ax1.plot(x, y, "r", label="notagueule")
         yEvaluation = stats.norm.pdf(x, np.mean(self.data.iloc[:,-2]), np.std(self.data.iloc[:,-2]))
-        self.ax2.plot(x, yEvaluation, "g", label="Initial")
-        self.ax2.legend()
+        self.ax1.plot(x, yEvaluation, "g", label="Initial")
+        self.ax1.legend()
         self.sc.draw_idle()
 #############################################
 
