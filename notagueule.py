@@ -112,8 +112,8 @@ class MainWindow(QWidget):
 
         self.setLayout(layout)
 
-        self.sliderMoy.setValue(np.mean(self.data.iloc[:,-1]) * 10)
-        self.sliderEcart.setValue(np.std(self.data.iloc[:,-1]))
+        self.sliderMoy.setValue(int(np.nanmean(self.data.iloc[:,-1]) * 10))
+        self.sliderEcart.setValue(np.nanstd(self.data.iloc[:,-1]))
         self.maj()
 
         self.sliderMoy.valueChanged.connect(self.nouvMoy)
@@ -140,36 +140,36 @@ class MainWindow(QWidget):
         self.data.to_csv("NTGexport.csv", sep=';', decimal=",", encoding='utf-8')
         
     def nouvMoy(self):
-        self.data.iloc[:, -1] = round(self.data.iloc[:,-2] + self.sliderMoy.value() / 10 - np.mean(self.data.iloc[:,-2]), 2)
+        self.data.iloc[:, -1] = round(self.data.iloc[:,-2] + self.sliderMoy.value() / 10 - np.nanmean(self.data.iloc[:,-2]), 2)
         self.maj()
       
         
     def nouvEcart(self):
         nouveauEcartType = self.sliderEcart.value()
-        ancienEcartType = np.std(self.data.iloc[:,-1])
-        moy = np.mean(self.data.iloc[:,-1])
+        ancienEcartType = np.nanstd(self.data.iloc[:,-1])
+        moy = np.nanmean(self.data.iloc[:,-1])
         self.data.iloc[:,-1] = round(self.data.iloc[:,-1] * nouveauEcartType / ancienEcartType - (nouveauEcartType / ancienEcartType - 1) * moy, 2)
         self.maj()
 
         
     def maj(self):
         for i in range(len(self.data.iloc[:,-1])):
-            if self.data.iloc[i,-1] > self.baremeMax :
+            if self.data.iloc[i,-1] > self.baremeMax:
                 self.data.iloc[i,-1] = self.baremeMax
             if self.data.iloc[i,-1] < 0 :
                 self.data.iloc[i,-1] = 0
         self.model = TableModel(self.data.iloc[:len(self.data)])
         self.table.setModel(self.model)
 
-        self.moyLabel.setText("Moyenne : " + str(round(np.mean(self.data.iloc[:,-1]), 2)))
-        self.sliderEcart.setValue(np.std(self.data.iloc[:,-1]))
+        self.moyLabel.setText("Moyenne : " + str(round(np.nanmean(self.data.iloc[:,-1]), 2)))
+        self.sliderEcart.setValue(np.nanstd(self.data.iloc[:,-1]))
         # gaussienne
-        x = np.linspace(0, self.baremeMax, 500)
-        y = stats.norm.pdf(x, np.mean(self.data.iloc[:,-1]), np.std(self.data.iloc[:,-1]))
+        x = np.linspace(0, int(self.baremeMax), 500)
+        y = stats.norm.pdf(x, np.nanmean(self.data.iloc[:,-1]), np.nanstd(self.data.iloc[:,-1]))
         self.ax1.cla()
-        self.ax1.hist(self.data.iloc[:, -2], bins=range(0, self.baremeMax, 1), density=True, color='gray', alpha=0.2)
+        self.ax1.hist(self.data.iloc[:, -2], bins=range(0, int(self.baremeMax), 1), density=True, color='gray', alpha=0.2)
         self.ax1.plot(x, y, "r", label="notagueule")
-        yEvaluation = stats.norm.pdf(x, np.mean(self.data.iloc[:,-2]), np.std(self.data.iloc[:,-2]))
+        yEvaluation = stats.norm.pdf(x, np.nanmean(self.data.iloc[:,-2]), np.nanstd(self.data.iloc[:,-2]))
         self.ax1.plot(x, yEvaluation, "g", label="Initial")
         self.ax1.legend()
         self.sc.draw_idle()

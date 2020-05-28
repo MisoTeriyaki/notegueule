@@ -10,14 +10,9 @@ Outil pour augmenter la bienveillance lors de l'évaluation d'élèves.
   * Définir la note maximale.
   * Ajuster **d'abord la moyenne**.
   * Les notes ajustées sont dans la colonne **notagueule**.
-  * Exporter les notes au format csv.
   
   
 * Prochaines améliorations :
   * Equivalence crédit ECTS pour les élèves de classes préparatoires
   * Génération d'un fichier compatible Pronote
   * Prise en compte de bonus suivant les voeux de poursuite d'étude
-
-
-
-
